@@ -92,7 +92,7 @@ public class MainActivity extends Activity {
         
         for (int i = 1; i <= NUMBER_OF_TABS; i++ ) {
 			// создаем вкладку и указываем тег
-			tabSpec = tabHost.newTabSpec("tab"+i);
+			tabSpec = tabHost.newTabSpec("tab" + i);
 			// название вкладки
 			tabSpec.setIndicator("Вкладка "+i);
 			// указываем id компонента из FrameLayout, он и станет содержимым
@@ -103,39 +103,60 @@ public class MainActivity extends Activity {
         
         // вторая вкладка будет выбрана по умолчанию
         tabHost.setCurrentTabByTag("tab2");
-        
+
         // обработчик переключения вкладок
         tabHost.setOnTabChangedListener(new OnTabChangeListener() {
         	public void onTabChanged(String tabId) {
+        		
         		Toast.makeText(getBaseContext(), "tabId = " + tabId, Toast.LENGTH_SHORT).show();
+        		
         		//подключаемся к БД
         		SQLiteDatabase db = dbHelper.getWritableDatabase();
-        		Log.d(LOG_TAG, "--- Rows in mytable: ---");
-        	      // делаем запрос всех данных из таблицы mytable, получаем Cursor 
-        	      Cursor c = db.query("phones", null, null, null, null, null, null);
-        	   // ставим позицию курсора на первую строку выборки
-        	      // если в выборке нет строк, вернется false
-        	      if (c.moveToFirst()) {
+        		
+        		if (tabId.equals("tab1")) {
+        			
+        		}
+        		
+        		if (tabId.equals("tab2")) {
+        			
+        		}
+        		
+        		if (tabId.equals("tab3")) {
+        			
+        		}
+        		
+        		if (tabId.equals("tab4")) {
+        			
+        		}
+        		
+        		if (tabId.equals("tab5")) {
+        			Log.d(LOG_TAG, "--- Rows in mytable: ---");
+          	      // делаем запрос всех данных из таблицы mytable, получаем Cursor 
+          	      Cursor c = db.query("phones", null, null, null, null, null, null);
+          	      // ставим позицию курсора на первую строку выборки
+          	      // если в выборке нет строк, вернется false
+          	      if (c.moveToFirst()) {
 
-        	        // определяем номера столбцов по имени в выборке
-        	        int idColIndex = c.getColumnIndex("_id");
-        	        int surnameColIndex = c.getColumnIndex("surname");
-        	        int nameColIndex = c.getColumnIndex("name");
+          	        // определяем номера столбцов по имени в выборке
+          	        int idColIndex = c.getColumnIndex("_id");
+          	        int surnameColIndex = c.getColumnIndex("surname");
+          	        int nameColIndex = c.getColumnIndex("name");
 
-        	        do {
-        	          // получаем значения по номерам столбцов и пишем все в лог
-        	          Log.d(LOG_TAG,
-        	              "ID = " + c.getInt(idColIndex) + 
-        	              ", surname = " + c.getString(surnameColIndex) + 
-        	              ", name = " + c.getString(nameColIndex));
-        	          // переход на следующую строку 
-        	          // а если следующей нет (текущая - последняя), то false - выходим из цикла
-        	        } while (c.moveToNext());
-        	      } else
-        	        Log.d(LOG_TAG, "0 rows");
-        	      c.close();
-        	      // закрываем подключение к БД
-        	      dbHelper.close();
+          	        do {
+          	          // получаем значения по номерам столбцов и пишем все в лог
+          	          Log.d(LOG_TAG,
+          	              "ID = " + c.getInt(idColIndex) + 
+          	              ", surname = " + c.getString(surnameColIndex) + 
+          	              ", name = " + c.getString(nameColIndex));
+          	          // переход на следующую строку 
+          	          // а если следующей нет (текущая - последняя), то false - выходим из цикла
+          	        } while (c.moveToNext());
+          	      } else
+          	        Log.d(LOG_TAG, "0 rows");
+          	      c.close();
+        		}
+        		// закрываем подключение к БД
+        		dbHelper.close();
             }
         });
         
