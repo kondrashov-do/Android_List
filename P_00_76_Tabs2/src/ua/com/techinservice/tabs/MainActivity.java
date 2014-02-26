@@ -28,7 +28,7 @@ public class MainActivity extends Activity {
 	final String LOG_TAG = "myLogs";
 	
 	//Количество вкладок
-	final int NUMBER_OF_TABS = 5;
+	final int NUMBER_OF_TABS = 7;
 	// имена атрибутов для Map
 	final String ATTRIBUTE_SURNAME_TEXT = "ATTRIBUTE_SURNAME_TEXT";
 	final String ATTRIBUTE_NAME_TEXT = "ATTRIBUTE_NAME_TEXT";
@@ -43,6 +43,8 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		
+		TabHost tabHost = (TabHost) findViewById(android.R.id.tabhost);
 		
 		 // создаем объект для создания и управления версиями БД
 	    dbHelper = new DataBaseHelper(this);
@@ -64,7 +66,7 @@ public class MainActivity extends Activity {
         ArrayList<String> inPhone = new ArrayList<String>();
         ArrayList<String> outPhone = new ArrayList<String>();
 	    
-        TabHost tabHost = (TabHost) findViewById(android.R.id.tabhost);
+        
         
         //подключаемся к БД
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -128,13 +130,13 @@ public class MainActivity extends Activity {
         tabHost.setup();
         TabHost.TabSpec tabSpec;
         
-        for (int i = 1; i <= NUMBER_OF_TABS; i++ ) {
+        for (int i = 0; i < NUMBER_OF_TABS; i++ ) {
 			// создаем вкладку и указываем тег
 			tabSpec = tabHost.newTabSpec("tab" + i);
 			// название вкладки
 			tabSpec.setIndicator("Вкладка "+i);
 			// указываем id компонента из FrameLayout, он и станет содержимым
-			tabSpec.setContent(0x7f070000 + i - 1);
+			tabSpec.setContent(0x7f070000 + i);
 			// добавляем в корневой элемент
 			tabHost.addTab(tabSpec);
 		}		
@@ -151,6 +153,10 @@ public class MainActivity extends Activity {
         		//подключаемся к БД
         		SQLiteDatabase db = dbHelper.getWritableDatabase();
         		
+        		if (tabId.equals("tab0")) {
+        			
+        		}
+        		
         		if (tabId.equals("tab1")) {
         			
         		}
@@ -164,10 +170,6 @@ public class MainActivity extends Activity {
         		}
         		
         		if (tabId.equals("tab4")) {
-        			
-        		}
-        		
-        		if (tabId.equals("tab5")) {
         			Log.d(LOG_TAG, "--- Rows in mytable: ---");
           	      // делаем запрос всех данных из таблицы mytable, получаем Cursor 
           	      Cursor c = db.query("phones", null, null, null, null, null, null);
