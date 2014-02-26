@@ -38,7 +38,7 @@ public class MainActivity extends Activity {
 	DataBaseHelper dbHelper;
 	
 	ListView lvSimple;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -54,23 +54,61 @@ public class MainActivity extends Activity {
 	    }
 	    
 		// массивы данных
-		String[] surname = {"Кабальский", "Ровинский", "Литовченко", "Каравай"};
-		String[] name = {"Геннадий Витальевич", "Артем Демьянович", "Марина Александровна", "Евгения Геннадиевна"};
-		String[] inPhone = {"134", "222", "143", "104"};
-		String[] outPhone = {"050-351-14-96", "050-312-92-12", "068-701-72-41", "063-145-97-68"};
-		
+//		String[] surname = {"Кабальский", "Ровинский", "Литовченко", "Каравай"};
+//		String[] name = {"Геннадий Витальевич", "Артем Демьянович", "Марина Александровна", "Евгения Геннадиевна"};
+//		String[] inPhone = {"134", "222", "143", "104"};
+//		String[] outPhone = {"050-351-14-96", "050-312-92-12", "068-701-72-41", "063-145-97-68"};
+	    
+        ArrayList<String> surname = new ArrayList<String>();
+        ArrayList<String> name = new ArrayList<String>();
+        ArrayList<String> inPhone = new ArrayList<String>();
+        ArrayList<String> outPhone = new ArrayList<String>();
+	    
         TabHost tabHost = (TabHost) findViewById(android.R.id.tabhost);
         
-               
+        //подключаемся к БД
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		
+		// делаем запрос всех данных из таблицы mytable, получаем Cursor 
+	    Cursor c = db.query("phones", null, null, null, null, null, null);
+		
+	    // ставим позицию курсора на первую строку выборки
+	    // если в выборке нет строк, вернется false
+	    if (c.moveToFirst()) {
+	    	
+	    	// определяем номера столбцов по имени в выборке
+	        int idColIndex = c.getColumnIndex("_id");
+	        int surnameColIndex = c.getColumnIndex("surname");
+	        int nameColIndex = c.getColumnIndex("name");
+	        int inPhoneColIndex = c.getColumnIndex("inPhone");
+	        int outPhoneColIndex = c.getColumnIndex("outPhone");
+
+	        do {
+	          // получаем значения по номерам столбцов и пишем все в лог
+	        	Log.d(LOG_TAG,
+	              "ID = " + c.getInt(idColIndex) + 
+	              ", surname = " + c.getString(surnameColIndex) + 
+	              ", name = " + c.getString(nameColIndex));
+	          surname.add(c.getString(surnameColIndex));
+	          name.add(c.getString(nameColIndex));
+	          inPhone.add(c.getString(inPhoneColIndex));
+	          outPhone.add(c.getString(outPhoneColIndex));
+	          // переход на следующую строку 
+	          // а если следующей нет (текущая - последняя), то false - выходим из цикла
+	        } while (c.moveToNext());
+	      } else
+	        Log.d(LOG_TAG, "0 rows");
+	    c.close();
+	    dbHelper.close();
         // упаковываем данные в понятную для адаптера структуру
-        ArrayList<Map<String, String>> data = new ArrayList<Map<String, String>>(surname.length);
+        ArrayList<Map<String, String>> data = new ArrayList<Map<String, String>>(surname.size());
         Map<String, String> m;
-        for (int i = 0; i < surname.length; i++) {
+        for (int i = 0; i < surname.size(); i++) {
         	m = new HashMap<String, String>();
-            m.put(ATTRIBUTE_SURNAME_TEXT, surname[i]);
-            m.put(ATTRIBUTE_NAME_TEXT, name[i]);
-            m.put(ATTRIBUTE_INPHONE_TEXT, inPhone[i]);
-            m.put(ATTRIBUTE_OUTPHONE_TEXT, outPhone[i]);
+            m.put(ATTRIBUTE_SURNAME_TEXT, surname.get(i));
+            m.put(ATTRIBUTE_NAME_TEXT, name.get(i));
+            m.put(ATTRIBUTE_INPHONE_TEXT, inPhone.get(i));
+            m.put(ATTRIBUTE_OUTPHONE_TEXT, outPhone.get(i));
             data.add(m);
           }
         
