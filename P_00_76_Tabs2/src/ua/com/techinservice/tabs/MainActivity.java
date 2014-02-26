@@ -132,7 +132,9 @@ public class MainActivity extends Activity {
 	        name.clear();
 	        inPhone.clear();
 	        outPhone.clear();
-	    }     
+	    }
+        
+        
         // инициализация вкладок
         tabHost.setup();
         TabHost.TabSpec tabSpec;
@@ -141,7 +143,7 @@ public class MainActivity extends Activity {
 			// создаем вкладку и указываем тег
 			tabSpec = tabHost.newTabSpec("tab" + i);
 			// название вкладки
-			tabSpec.setIndicator("Вкладка "+i);
+			tabSpec.setIndicator(DEPARTMENT[i]);
 			// указываем id компонента из FrameLayout, он и станет содержимым
 			tabSpec.setContent(0x7f070000 + i);
 			// добавляем в корневой элемент
