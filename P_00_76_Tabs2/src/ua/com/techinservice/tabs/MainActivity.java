@@ -70,11 +70,7 @@ public class MainActivity extends Activity {
 //		String[] name = {"Геннадий Витальевич", "Артем Демьянович", "Марина Александровна", "Евгения Геннадиевна"};
 //		String[] inPhone = {"134", "222", "143", "104"};
 //		String[] outPhone = {"050-351-14-96", "050-312-92-12", "068-701-72-41", "063-145-97-68"};
-	    
-        ArrayList<String> surname = new ArrayList<String>();
-        ArrayList<String> name = new ArrayList<String>();
-        ArrayList<String> inPhone = new ArrayList<String>();
-        ArrayList<String> outPhone = new ArrayList<String>();
+
 	    
         for (int i = 0; i < NUMBER_OF_TABS; i++) {
 	    	//подключаемся к БД
@@ -82,6 +78,10 @@ public class MainActivity extends Activity {
 			String selection = "department = '" + DEPARTMENT[i] + "'";			
 			// делаем запрос нужных данных из таблицы phones, получаем Cursor 
 			Cursor c = db.query("phones", null, selection, null, null, null, null);
+			
+			// упаковываем данные в понятную для адаптера структуру
+		    ArrayList<Map<String, String>> data = new ArrayList<Map<String, String>>();
+		    Map<String, String> m;
 			
 			// ставим позицию курсора на первую строку выборки
 		    // если в выборке нет строк, вернется false
@@ -99,39 +99,25 @@ public class MainActivity extends Activity {
 			        "ID = " + c.getInt(idColIndex) + 
 			        ", surname = " + c.getString(surnameColIndex) + 
 			        ", name = " + c.getString(nameColIndex));
-			        surname.add(c.getString(surnameColIndex));
-			        name.add(c.getString(nameColIndex));
-			        inPhone.add(c.getString(inPhoneColIndex));
-			        outPhone.add(c.getString(outPhoneColIndex));
+			        
+			        m = new HashMap<String, String>();
+			        m.put(ATTRIBUTE_SURNAME_TEXT, c.getString(surnameColIndex));
+			        m.put(ATTRIBUTE_NAME_TEXT, c.getString(nameColIndex));
+			        m.put(ATTRIBUTE_INPHONE_TEXT, c.getString(inPhoneColIndex));
+			        m.put(ATTRIBUTE_OUTPHONE_TEXT, c.getString(outPhoneColIndex));
+			        data.add(m);
 			        // переход на следующую строку 
 			        // а если следующей нет (текущая - последняя), то false - выходим из цикла
 			        } while (c.moveToNext());
 			    } else
 			    	Log.d(LOG_TAG, "0 rows");
 			    c.close();
-			    dbHelper.close();
-			 
-			// упаковываем данные в понятную для адаптера структуру
-		    ArrayList<Map<String, String>> data = new ArrayList<Map<String, String>>(surname.size());
-		    Map<String, String> m;
-		    for (int j = 0; j < surname.size(); j++) {
-		       	m = new HashMap<String, String>();
-		        m.put(ATTRIBUTE_SURNAME_TEXT, surname.get(j));
-		        m.put(ATTRIBUTE_NAME_TEXT, name.get(j));
-		        m.put(ATTRIBUTE_INPHONE_TEXT, inPhone.get(j));
-		        m.put(ATTRIBUTE_OUTPHONE_TEXT, outPhone.get(j));
-		        data.add(m);
-		    }
+			    dbHelper.close();  
 		    // создаем адаптер
 	        SimpleAdapter sAdapter = new SimpleAdapter(this, data, R.layout.my_list_item, from, to);
 	        // определяем список и присваиваем ему адаптер
 	        lvSimple = (ListView) findViewById(0x7f070000 + i);
 	        lvSimple.setAdapter(sAdapter);
-	        //очищаем списки
-	        surname.clear();
-	        name.clear();
-	        inPhone.clear();
-	        outPhone.clear();
 	    }
         
         
