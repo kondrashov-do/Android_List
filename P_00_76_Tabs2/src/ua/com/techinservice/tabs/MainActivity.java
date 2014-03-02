@@ -1,26 +1,23 @@
 package ua.com.techinservice.tabs;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Activity;
-import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -47,7 +44,7 @@ public class MainActivity extends Activity {
 	
 	DataBaseHelper dbHelper;
 	
-	ListView lvSimple;
+	ListView lvSimple, lvAdministrative;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +116,18 @@ public class MainActivity extends Activity {
 	        lvSimple = (ListView) findViewById(0x7f070000 + i);
 	        lvSimple.setAdapter(sAdapter);
 	    }
-        
+        // onClick administrative List (Tab1)
+        lvAdministrative = (ListView) findViewById(R.id.lvTab1);
+        lvAdministrative.setOnItemClickListener(new OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view,
+                int position, long id) {
+            	String outPhone = ((TextView) view.findViewById(R.id.tvOutPhone)).getText().toString();
+            	
+            	//parent.getAdapter().getItem(position).toString()
+              Log.d(LOG_TAG, "itemClick: position = " + position + ", id = "
+                  + id + ", outPhone = " + outPhone);
+            }
+          });
         
         // инициализация вкладок
         tabHost.setup();
