@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TabHost;
@@ -50,7 +51,7 @@ public class MainActivity extends Activity {
 	//Массив списков
 	ListView[] lvArray = new ListView[NUMBER_OF_TABS];
 	
-	Intent intent;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -166,21 +167,50 @@ public class MainActivity extends Activity {
         });
         
      // обработчик нажатия на елемент в списке
-        lvArray[1].setOnItemClickListener(new OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view,
-                int position, long id) {
-            	String outPhone = ((TextView) view.findViewById(R.id.tvOutPhone)).getText().toString();
-            	
-            	//parent.getAdapter().getItem(position).toString()
-              Log.d(LOG_TAG, "itemClick: position = " + position + ", id = "
-                  + id + ", outPhone = " + outPhone);
-              
-              intent = new Intent(Intent.ACTION_DIAL);
-              intent.setData(Uri.parse("tel:" + outPhone));
-              startActivity(intent);
-            }
-          });
+        lvArray[0].setOnItemClickListener(new OnItemClickListener() {
+        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            	startCall(view);
+        	}
+        });
         
+        lvArray[1].setOnItemClickListener(new OnItemClickListener() {
+        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            	//startCall(view);
+        	}
+        });
+        
+        lvArray[2].setOnItemClickListener(new OnItemClickListener() {
+        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            	startCall(view);
+        	}
+        });
+        
+        lvArray[3].setOnItemClickListener(new OnItemClickListener() {
+        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            	startCall(view);
+        	}
+        });
+        
+        //Обработчик длинного нажатия
+        lvArray[1].setOnItemLongClickListener(new OnItemLongClickListener() {
+        	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        		startCall(view);
+        	return true;
+        		
+        	}
+        });
+        
+	}
+	
+	// Направить телефон в активити диалера
+	public void startCall(View view) {
+		
+		Intent intent;
+		String outPhone = ((TextView) view.findViewById(R.id.tvOutPhone)).getText().toString();
+		intent = new Intent(Intent.ACTION_DIAL);
+        intent.setData(Uri.parse("tel:" + outPhone));
+        startActivity(intent);
+		
 	}
 
 //	@Override
@@ -189,5 +219,7 @@ public class MainActivity extends Activity {
 //		getMenuInflater().inflate(R.menu.main, menu);
 //		return true;
 //	}
+	
+	
 }
 
