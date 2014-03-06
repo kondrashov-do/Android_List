@@ -48,6 +48,7 @@ public class MainActivity extends Activity {
 	DataBaseHelper dbHelper;
 	
 	//ListView lvSimple, lvAdministrative;
+	
 	//Массив списков
 	ListView[] lvArray = new ListView[NUMBER_OF_TABS];
 	
@@ -121,7 +122,7 @@ public class MainActivity extends Activity {
 		    // создаем адаптер
 	        SimpleAdapter sAdapter = new SimpleAdapter(this, data, R.layout.my_list_item, from, to);
 	        // определяем список и присваиваем ему адаптер
-	        lvArray[i] = (ListView) findViewById(0x7f070000 + i);
+	        lvArray[i] = (ListView) findViewById(R.id.lvTab0 + i);
 	        lvArray[i].setAdapter(sAdapter);
 	        
 	        // СОЗДАНИЕ ВКЛАДОК!!!
@@ -130,7 +131,7 @@ public class MainActivity extends Activity {
 			// название вкладки
 			tabSpec.setIndicator(DEPARTMENT[i]);
 			// указываем id компонента из FrameLayout, он и станет содержимым
-			tabSpec.setContent(0x7f070000 + i);
+			tabSpec.setContent(R.id.lvTab0 + i);
 			// добавляем в корневой элемент
 			tabHost.addTab(tabSpec);
 	    }
@@ -166,7 +167,7 @@ public class MainActivity extends Activity {
             }
         });
         
-     // обработчик нажатия на елемент в списке
+     // обработчик нажатия на елемент в списке добавить для каждого таба
         lvArray[0].setOnItemClickListener(new OnItemClickListener() {
         	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             	startCall(view);
@@ -193,13 +194,14 @@ public class MainActivity extends Activity {
         
         //Обработчик длинного нажатия
         lvArray[1].setOnItemLongClickListener(new OnItemLongClickListener() {
-        	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        		startCall(view);
+			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+				startCall(view);
         	return true;
         		
         	}
         });
-        
+        // Вывод тега текущей вкладки
+        Log.d(LOG_TAG,"TabTag =" + tabHost.getCurrentTabTag());
 	}
 	
 	// Направить телефон в активити диалера
@@ -207,10 +209,11 @@ public class MainActivity extends Activity {
 		
 		Intent intent;
 		String outPhone = ((TextView) view.findViewById(R.id.tvOutPhone)).getText().toString();
-		intent = new Intent(Intent.ACTION_DIAL);
-        intent.setData(Uri.parse("tel:" + outPhone));
-        startActivity(intent);
-		
+		if (!outPhone.isEmpty()) {
+			intent = new Intent(Intent.ACTION_DIAL);
+			intent.setData(Uri.parse("tel:" + outPhone));
+			startActivity(intent);
+		}
 	}
 
 //	@Override
