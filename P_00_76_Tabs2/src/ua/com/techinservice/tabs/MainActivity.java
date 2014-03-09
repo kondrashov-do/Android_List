@@ -5,12 +5,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -23,7 +24,7 @@ import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity {
 	
 	final String LOG_TAG = "myLogs";
 	// Departments
@@ -47,6 +48,8 @@ public class MainActivity extends Activity {
 	
 	DataBaseHelper dbHelper;
 	
+	DialogEdit editDialog;
+	
 	//ListView lvSimple, lvAdministrative;
 	
 	//Массив списков
@@ -63,6 +66,8 @@ public class MainActivity extends Activity {
         tabHost.setup();
         TabHost.TabSpec tabSpec;
 		
+        editDialog = new DialogEdit();
+        
 		// создаем объект для создания и управления версиями БД
 	    dbHelper = new DataBaseHelper(this);
 		
@@ -176,7 +181,7 @@ public class MainActivity extends Activity {
         
         lvArray[1].setOnItemClickListener(new OnItemClickListener() {
         	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            	//startCall(view);
+            	startCall(view);
         	}
         });
         
@@ -195,7 +200,13 @@ public class MainActivity extends Activity {
         //Обработчик длинного нажатия
         lvArray[1].setOnItemLongClickListener(new OnItemLongClickListener() {
 			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-				startCall(view);
+				
+				editDialog.setFields(((TextView) view.findViewById(R.id.tvSurname)).getText().toString(),
+						((TextView) view.findViewById(R.id.tvName)).getText().toString(),
+						((TextView) view.findViewById(R.id.tvInPhone)).getText().toString(),
+						((TextView) view.findViewById(R.id.tvOutPhone)).getText().toString());
+				
+				editDialog.show( getSupportFragmentManager(), "editDialog");
         	return true;
         		
         	}
@@ -206,7 +217,6 @@ public class MainActivity extends Activity {
 	
 	// Направить телефон в активити диалера
 	public void startCall(View view) {
-		
 		Intent intent;
 		String outPhone = ((TextView) view.findViewById(R.id.tvOutPhone)).getText().toString();
 		if (!outPhone.isEmpty()) {

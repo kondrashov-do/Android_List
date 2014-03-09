@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+ xmlns:android="http://schemas.android.com/apk/res/android"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ android:orientation="vertical">
+
+<TextView
+    android:id="@+id/textViewSurname"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:text="Фамилия" >
+
+</TextView>
+<EditText
+ android:id="@+id/etSurname"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_marginLeft="10dp">
+<requestFocus>
+</requestFocus>
+</EditText>
+<TextView
+ android:id="@+id/textViewName"
+ android:layout_width="match_parent"
+ android:layout_height="wrap_content"
+ android:gravity="center_horizontal"
+ android:text="Имя">
+</TextView>
+<EditText
+ android:id="@+id/etName"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_marginLeft="10dp">
+</EditText>
+<TextView
+    android:id="@+id/textViewInPhone"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:text="Внутренний телефон" >
+</TextView>
+<EditText
+ android:id="@+id/etInPhone"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_marginLeft="10dp">
+</EditText>
+
+<TextView
+    android:id="@+id/textViewOutPhone"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:text="Внешний телефон" >
+
+</TextView>
+<EditText
+ android:id="@+id/etOutPhone"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_marginLeft="10dp">
+</EditText>
+<LinearLayout
+ android:id="@+id/linearLayoutButtons"
+ android:layout_width="match_parent"
+ android:layout_height="wrap_content"
+ android:layout_margin="10dp">
+<Button
+    android:id="@+id/btnOK"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="left"
+    android:text="OK" 
+    android:layout_weight="1">
+
+</Button>
+
+<Button
+    android:id="@+id/btnCancel"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="right"
+    android:text="Cancel" 
+     android:layout_weight="1"/>
+</LinearLayout>
+</LinearLayout>
