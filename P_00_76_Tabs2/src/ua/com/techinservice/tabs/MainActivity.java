@@ -59,13 +59,27 @@ public class MainActivity extends FragmentActivity {
 	//Массив списков
 	static ListView[] lvArray = new ListView[NUMBER_OF_TABS];
 	
+	// Maccuв
+	// упаковываем данные в понятную для адаптера структуру
+    //static ArrayList<Map<String, String>>[] data;
+    //static Map<String, String>[] m;
+	//static SimpleAdapter sAdapter[];
+    
 	static TabHost tabHost;
+	//static TabHost.TabSpec tabSpec;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		// context of MainActivity
 		MainActivity.context = getApplicationContext();
+
+		// массивы данных
+//		String[] surname = {"Кабальский", "Ровинский", "Литовченко", "Каравай"};
+//		String[] name = {"Геннадий Витальевич", "Артем Демьянович", "Марина Александровна", "Евгения Геннадиевна"};
+//		String[] inPhone = {"134", "222", "143", "104"};
+//		String[] outPhone = {"050-351-14-96", "050-312-92-12", "068-701-72-41", "063-145-97-68"};
 		
 		tabHost = (TabHost) findViewById(android.R.id.tabhost);
 		
@@ -78,76 +92,22 @@ public class MainActivity extends FragmentActivity {
 		// создаем объект для создания и управления версиями БД
 	    dbHelper = new DataBaseHelper(this);
 		
-	    try {
-	    	dbHelper.createDataBase();
-	    } catch (IOException ioe) {
-	    	throw new Error("Unable to create database");
-	    }	    
-		// массивы данных
-//		String[] surname = {"Кабальский", "Ровинский", "Литовченко", "Каравай"};
-//		String[] name = {"Геннадий Витальевич", "Артем Демьянович", "Марина Александровна", "Евгения Геннадиевна"};
-//		String[] inPhone = {"134", "222", "143", "104"};
-//		String[] outPhone = {"050-351-14-96", "050-312-92-12", "068-701-72-41", "063-145-97-68"};
-
-	    //Заполняем данные из БД в листы и создаем вкладки
-        for (int i = 0; i < NUMBER_OF_TABS; i++) {
-	    	//подключаемся к БД
-			SQLiteDatabase db = dbHelper.getWritableDatabase();
-			String selection = "department = '" + DEPARTMENT[i] + "'";			
-			// делаем запрос нужных данных из таблицы phones, получаем Cursor 
-			Cursor c = db.query("phones", null, selection, null, null, null, null);
-			
-			// упаковываем данные в понятную для адаптера структуру
-		    ArrayList<Map<String, String>> data = new ArrayList<Map<String, String>>();
-		    Map<String, String> m;
-			
-			// ставим позицию курсора на первую строку выборки
-		    // если в выборке нет строк, вернется false
-		    if (c.moveToFirst()) {
-		    	
-		    	// определяем номера столбцов по имени в выборке
-		        int idColIndex = c.getColumnIndex("_id");
-		        int surnameColIndex = c.getColumnIndex("surname");
-		        int nameColIndex = c.getColumnIndex("name");
-		        int inPhoneColIndex = c.getColumnIndex("inPhone");
-		        int outPhoneColIndex = c.getColumnIndex("outPhone");
-		        do {
-		        	// получаем значения по номерам столбцов и пишем все в лог
-			        Log.d(LOG_TAG,
-			        "ID = " + c.getInt(idColIndex) + 
-			        ", surname = " + c.getString(surnameColIndex) + 
-			        ", name = " + c.getString(nameColIndex));
-			        
-			        m = new HashMap<String, String>();			        
-			        m.put(ATTRIBUTE_ID_TEXT, c.getString(idColIndex));
-			        m.put(ATTRIBUTE_SURNAME_TEXT, c.getString(surnameColIndex));
-			        m.put(ATTRIBUTE_NAME_TEXT, c.getString(nameColIndex));
-			        m.put(ATTRIBUTE_INPHONE_TEXT, c.getString(inPhoneColIndex));
-			        m.put(ATTRIBUTE_OUTPHONE_TEXT, c.getString(outPhoneColIndex));
-			        data.add(m);
-			        // переход на следующую строку 
-			        // а если следующей нет (текущая - последняя), то false - выходим из цикла
-			        } while (c.moveToNext());
-			    } else
-			    	Log.d(LOG_TAG, "0 rows");
-			    c.close();
-			    dbHelper.close();  
-		    // создаем адаптер
-	        SimpleAdapter sAdapter = new SimpleAdapter(this, data, R.layout.my_list_item, FROM, TO);
-	        // определяем список и присваиваем ему адаптер
+	    for (int i = 0; i < NUMBER_OF_TABS; i++) {
+	    	// определяем список
 	        lvArray[i] = (ListView) findViewById(R.id.lvTab0 + i);
-	        lvArray[i].setAdapter(sAdapter);
 	        
 	        // СОЗДАНИЕ ВКЛАДОК!!!
-			// создаем вкладку и указываем тег
-			tabSpec = tabHost.newTabSpec("tab" + i);
-			// название вкладки
-			tabSpec.setIndicator(DEPARTMENT[i]);
-			// указываем id компонента из FrameLayout, он и станет содержимым
-			tabSpec.setContent(R.id.lvTab0 + i);
-			// добавляем в корневой элемент
-			tabHost.addTab(tabSpec);
+	        // создаем вкладку и указываем тег
+	     	tabSpec = tabHost.newTabSpec("tab" + i);
+	     	// название вкладки
+	     	tabSpec.setIndicator(DEPARTMENT[i]);
+	     	// указываем id компонента из FrameLayout, он и станет содержимым
+	     	tabSpec.setContent(R.id.lvTab0 + i);
+	     	// добавляем в корневой элемент
+	     	tabHost.addTab(tabSpec);
 	    }
+	    
+	    createListTab();
   
         // вторая вкладка будет выбрана по умолчанию
         tabHost.setCurrentTabByTag("tab2");
@@ -217,7 +177,8 @@ public class MainActivity extends FragmentActivity {
 						dbHelper);
 				
 				editDialog.show( getSupportFragmentManager(), "editDialog");
-        	return true;
+				Log.d(LOG_TAG, "Long click is over");
+			return true;
         		
         	}
         });
@@ -236,20 +197,12 @@ public class MainActivity extends FragmentActivity {
 		}
 	}
 	
+	// установить нужный таб после обновления БД
 	public static void setCurrentTag() {
-		// Вывод тега текущей вкладки
-        Log.d(LOG_TAG,"TabTag =" + tabHost.getCurrentTabTag());
-        String tabId = tabHost.getCurrentTabTag().toString();
-        String id = tabId.substring(3);
-		
-		//int nextId = Integer.parseInt(id) + 1;
-		//Log.d(LOG_TAG,"TabTag =" + nextId);
-		//tabHost.setCurrentTabByTag("tab" + nextId);
-		//nextId--; 
-		tabHost.setCurrentTabByTag("tab" + id);
-		//tabHost.setCurrentTabByTag("tab" + id);
+		tabHost.setCurrentTabByTag(tabHost.getCurrentTabTag());
 	}
 	
+	// создание списков для заполнения табов, вычитывая данные из БД
 	public static void createListTab() { 
 		
 		try {
@@ -271,7 +224,7 @@ public class MainActivity extends FragmentActivity {
 			Cursor c = db.query("phones", null, selection, null, null, null, null);
 			
 			// упаковываем данные в понятную для адаптера структуру
-		    ArrayList<Map<String, String>> data = new ArrayList<Map<String, String>>();
+			ArrayList<Map<String, String>> data = new ArrayList<Map<String, String>>();
 		    Map<String, String> m;
 			
 			// ставим позицию курсора на первую строку выборки
@@ -305,8 +258,9 @@ public class MainActivity extends FragmentActivity {
 			    	Log.d(LOG_TAG, "0 rows");
 			    c.close();
 			    dbHelper.close();  
-			    // создаем адаптер
-	        SimpleAdapter sAdapter = new SimpleAdapter(MainActivity.context, data, R.layout.my_list_item, FROM, TO);
+			    
+			// создаем адаптер
+			SimpleAdapter sAdapter = new SimpleAdapter(MainActivity.context, data, R.layout.my_list_item, FROM, TO);
 	        // определяем список и присваиваем ему адаптер
 	        
 	        //ВЫРЕЗАЛ НУЖНО ВСТАВИТЬ НЕ В СТАТИК МЕТОДЕ
@@ -326,6 +280,58 @@ public class MainActivity extends FragmentActivity {
 			
 	    }
 		}
+	
+	// Обновление элемента списка
+	public static void updateListItem() {
+		
+		//подключаемся к БД
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		// id текущего таба
+		int idTab = Integer.parseInt(tabHost.getCurrentTabTag().substring(3));
+		
+		String selection = "department = '" + DEPARTMENT[idTab] + "'";			
+		// делаем запрос нужных данных из таблицы phones, получаем Cursor 
+		Cursor c = db.query("phones", null, selection, null, null, null, null);
+		
+		ArrayList<Map<String, String>> data = new ArrayList<Map<String, String>>();
+		Map<String, String> m;
+		
+		if (c.moveToFirst()) {
+			// определяем номера столбцов по имени в выборке
+			int idColIndex = c.getColumnIndex("_id");
+			int surnameColIndex = c.getColumnIndex("surname");
+	        int nameColIndex = c.getColumnIndex("name");
+	        int inPhoneColIndex = c.getColumnIndex("inPhone");
+	        int outPhoneColIndex = c.getColumnIndex("outPhone");
+	        
+	        do {
+	        	// получаем значения по номерам столбцов и пишем все в лог
+		        Log.d(LOG_TAG,
+		        "ID = " + c.getInt(idColIndex) + 
+		        ", surname = " + c.getString(surnameColIndex) + 
+		        ", name = " + c.getString(nameColIndex));
+		        
+		        m = new HashMap<String, String>();			        
+		        m.put(ATTRIBUTE_ID_TEXT, c.getString(idColIndex));
+		        m.put(ATTRIBUTE_SURNAME_TEXT, c.getString(surnameColIndex));
+		        m.put(ATTRIBUTE_NAME_TEXT, c.getString(nameColIndex));
+		        m.put(ATTRIBUTE_INPHONE_TEXT, c.getString(inPhoneColIndex));
+		        m.put(ATTRIBUTE_OUTPHONE_TEXT, c.getString(outPhoneColIndex));
+		        data.add(m);
+		        // переход на следующую строку 
+		        // а если следующей нет (текущая - последняя), то false - выходим из цикла
+		        } while (c.moveToNext());
+		} else
+	    	Log.d(LOG_TAG, "0 rows");
+		
+		c.close();
+	    dbHelper.close();
+	    
+	    // создаем адаптер
+	    SimpleAdapter sAdapter = new SimpleAdapter(MainActivity.context, data, R.layout.my_list_item, FROM, TO);
+        
+        lvArray[idTab].setAdapter(sAdapter);
+	}
 
 //	@Override
 //	public boolean onCreateOptionsMenu(Menu menu) {

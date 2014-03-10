@@ -25,22 +25,29 @@ public class DialogEdit extends DialogFragment implements OnClickListener {
 		getDialog().setTitle("Title!");
 	    View v = inflater.inflate(R.layout.edit_with_new_lines, null);
 
-	    etSurname = v.findViewById(R.id.etSurname1);
-	    ((TextView) etSurname).setText(surname);
+	    etSurname = v.findViewById(R.id.etSurname);
+	    //((TextView) etSurname).setText(surname);
 	    
 	    etName = v.findViewById(R.id.etName);
-	    ((TextView) etName).setText(name);
+//	    ((TextView) etName).setText(name);
 	    
 	    etInPhone = v.findViewById(R.id.etInPhone);
-	    ((TextView) etInPhone).setText(inPhone);
+//	    ((TextView) etInPhone).setText(inPhone);
 	    
 	    etOutPhone = v.findViewById(R.id.etOutPhone);
-	    ((TextView) etOutPhone).setText(outPhone);
-
+//	    ((TextView) etOutPhone).setText(outPhone);
+	    setEditTextFields();
 	    v.findViewById(R.id.btnOK).setOnClickListener(this);
 	    v.findViewById(R.id.btnCancel).setOnClickListener(this);
 	    
 	    return v;
+	}
+	
+	private void setEditTextFields() {
+	    ((TextView) etSurname).setText(surname);
+	    ((TextView) etName).setText(name);
+	    ((TextView) etInPhone).setText(inPhone);
+	    ((TextView) etOutPhone).setText(outPhone);
 	}
 	
 	public void setFields(String id, String surname, String name, String inPhone, String outPhone, DataBaseHelper dbHelper) {
@@ -54,32 +61,42 @@ public class DialogEdit extends DialogFragment implements OnClickListener {
 	
 	public void onClick(View v) {
 	    Log.d(LOG_TAG, "Dialog 1: " + ((Button) v).getText());
+	    switch (v.getId()) {
 	    
-	    // создаем объект для данных
-        ContentValues cv = new ContentValues();
+	    	case R.id.btnOK:
+	    		// создаем объект для данных
+	            ContentValues cv = new ContentValues();
+	    	    
+	            Log.d(LOG_TAG, "Id: " + id);
+	            
+	            // подготовим данные для вставки в виде пар: наименование столбца -
+	            // значение
+	            cv.put("surname", ((TextView) etSurname).getText().toString());
+	            cv.put("name", ((TextView) etName).getText().toString());
+	            cv.put("inPhone", ((TextView) etInPhone).getText().toString());
+	            cv.put("outPhone", ((TextView) etOutPhone).getText().toString());
+	            
+	            //подключаемся к БД
+	    		SQLiteDatabase db = dbHelper.getWritableDatabase();
+	            
+	            // обновляем по id
+	    		int updCount = db.update("phones", cv, "_id = " + id, null);
+	    		
+	    		Log.d(LOG_TAG, "updated rows count = " + updCount);
+	            
+	            // закрываем подключение к БД
+	            dbHelper.close();
+	            MainActivity.updateListItem();
+	            setEditTextFields();
+	            dismiss();
+	    	break;
+	    	
+	    	case R.id.btnCancel:
+	    		dismiss();
+		    break;
 	    
-        Log.d(LOG_TAG, "Id: " + id);
-        
-        // подготовим данные для вставки в виде пар: наименование столбца -
-        // значение
-        cv.put("surname", ((TextView) etSurname).getText().toString());
-        cv.put("name", ((TextView) etName).getText().toString());
-        cv.put("inPhone", ((TextView) etInPhone).getText().toString());
-        cv.put("outPhone", ((TextView) etOutPhone).getText().toString());
-        
-        //подключаемся к БД
-		SQLiteDatabase db = dbHelper.getWritableDatabase();
-        
-        // обновляем по id
-		int updCount = db.update("phones", cv, "_id = " + id, null);
-		
-		Log.d(LOG_TAG, "updated rows count = " + updCount);
-        
-        // закрываем подключение к БД
-        dbHelper.close();
-        MainActivity.createListTab();
-        dismiss();
-        MainActivity.setCurrentTag();
+	    }
+	    
 	}
 	
 	public void onDismiss(DialogInterface dialog) {
